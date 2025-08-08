@@ -109,26 +109,29 @@ with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
     tmp_file.write(uploaded_file.getvalue())
     file_path = tmp_file.name
 
+def create_user_folders(username):
+    """Create organized folder structure for user"""
+    base_path = f"processed_documents/{username}"
+    
     # Create main user folder
     os.makedirs(base_path, exist_ok=True)
 
-    # Create subfolders for different document types
+    # Create subfolders
     doc_types = ["passport", "visa", "certificate", "permit", "other"]
     for doc_type in doc_types:
         os.makedirs(f"{base_path}/{doc_type}", exist_ok=True)
 
-    return base_path
+    return base_path  # Now safely inside the function
 
 def organize_document(username, doc_type, original_file, extracted_data):
     """Move and organize processed document"""
     # Create folder structure
     user_path = create_user_folders(username)
 
-    # Generate new filename with timestamp
+    # Generate new filename
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     file_extension = os.path.splitext(original_file)[1]
     new_filename = f"{doc_type}_{timestamp}{file_extension}"
-
     # Move file to organized location
     destination = f"{user_path}/{doc_type}/{new_filename}"
     shutil.copy2(original_file, destination)
